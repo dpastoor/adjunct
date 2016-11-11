@@ -41,6 +41,4 @@ try_knit <- function(file) {
         return(list(had_error = FALSE, contents = knit_result))
 }
 
-try_knit("is_formed.Rmd")
-try_knit("malformed.Rmd")
 
