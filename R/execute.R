@@ -26,6 +26,7 @@ try_parse <- function(x) {
 try_knit <- function(file) {
     knit_result <-
         tryCatch({
+            rmarkdown::render(file, quiet = T)
         }, error = function(e) {
             print("error knitting")
             return(e)
