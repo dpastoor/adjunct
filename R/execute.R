@@ -13,7 +13,6 @@ try_parse <- function(x) {
             print("looks good!")
         })
 
-    browser()
     if (any("error" %in% class(result))) {
         # return the error as html
         print('failed parsing')
