@@ -28,13 +28,19 @@ app$on('start', function(server, ...) {
 # Handle requests
 app$on('request', function(server, id, request, ...) {
     req_body <- jsonlite::fromJSON(request$rook.input$read_lines())
-    message(req_body$code)
     maybe_parsed <- try_parse(req_body$code)
-    message(maybe_parsed)
+
     if(maybe_parsed$had_error) {
         lines <- maybe_parsed$contents
     } else {
-        lines <- readr::read_file("is_formed.html")
+        file_name <- paste0(req_body$session_name, ".Rmd")
+        readr::write_lines(c(template_start, req_body$code, template_end), file_name)
+        maybe_knit <- try_knit(file_name)
+        if(maybe_knit$had_error) {
+            lines <- maybe_knit$contents
+        } else {
+            lines <- readr::read_file(paste0(req_body$session_name, ".html"))
+        }
     }
     list(
         status = 200L,
