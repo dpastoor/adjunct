@@ -1,5 +1,5 @@
 library(fiery)
-
+source("R/execute.R")
 template_start <- c("---",
     "title: \"\"",
     "output: html_document",
@@ -27,7 +27,15 @@ app$on('start', function(server, ...) {
 
 # Handle requests
 app$on('request', function(server, id, request, ...) {
-    lines <- readr::read_file("is_formed.html")
+    req_body <- jsonlite::fromJSON(request$rook.input$read_lines())
+    message(req_body$code)
+    maybe_parsed <- try_parse(req_body$code)
+    message(maybe_parsed)
+    if(maybe_parsed$had_error) {
+        lines <- maybe_parsed$contents
+    } else {
+        lines <- readr::read_file("is_formed.html")
+    }
     list(
         status = 200L,
         headers = list('Content-Type' = 'text/html'),
