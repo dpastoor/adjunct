@@ -15,10 +15,10 @@ try_parse <- function(x) {
     if (any(class(result) %in% "error")) {
         # return the error as html
         print('failed parsing')
-        return(list(is_error = TRUE, contents = result$message))
+        return(list(had_error = TRUE, contents = result$message))
     }
 
-    return(list(is_error = FALSE, contents = result))
+    return(list(had_error = FALSE, contents = TRUE))
 
 }
 
@@ -36,9 +36,9 @@ try_knit <- function(file) {
     if (any(class(knit_result) %in% "error")) {
         # return the error as html
         print('failed parsing')
-        return(list(is_error = TRUE, contents = knit_result$message))
+        return(list(had_error = TRUE, contents = knit_result$message))
     }
-        return(list(is_error = FALSE, contents = knit_result))
+        return(list(had_error = FALSE, contents = knit_result))
 }
 
 try_knit("is_formed.Rmd")
