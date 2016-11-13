@@ -30,6 +30,7 @@ app$header("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Ty
 # Handle requests
 app$on('request', function(server, id, request, ...) {
     if (request$REQUEST_METHOD == "OPTIONS") {
+        ## assuming this is preflight request check
         return(list(
             status=200L,
             headers=list(
@@ -38,6 +39,7 @@ app$on('request', function(server, id, request, ...) {
                 "Access-Control-Max-Age"= '3600',
                 "Access-Control-Allow-Headers"='Origin, X-Requested-With, Content-Type, Accept'
             ),
+            # also need body to satisfy fiery https://github.com/thomasp85/fiery/blob/master/R/Fire.R#L414
             body=""
         ))
     }
