@@ -23,8 +23,10 @@ app$host <- "127.0.0.1"
 app$on('start', function(server, ...) {
     message("listening on: ", paste(server$host, server$port, sep = ":"))
 })
-
-
+app$header("Access-Control-Allow-Methods", 'POST, GET, PUT, OPTIONS, DELETE, PATCH')
+app$header("Access-Control-Allow-Origin", '*')
+app$header("Access-Control-Max-Age", '3600')
+app$header("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Type, Accept')
 # Handle requests
 app$on('request', function(server, id, request, ...) {
     req_body <- jsonlite::fromJSON(request$rook.input$read_lines())
