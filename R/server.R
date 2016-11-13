@@ -29,6 +29,18 @@ app$header("Access-Control-Max-Age", '3600')
 app$header("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Type, Accept')
 # Handle requests
 app$on('request', function(server, id, request, ...) {
+    if (request$REQUEST_METHOD == "OPTIONS") {
+        return(list(
+            status=200L,
+            headers=list(
+                "Access-Control-Allow-Methods" = 'POST, GET, PUT, OPTIONS, DELETE, PATCH',
+                "Access-Control-Allow-Origin" = '*',
+                "Access-Control-Max-Age"= '3600',
+                "Access-Control-Allow-Headers"='Origin, X-Requested-With, Content-Type, Accept'
+            ),
+            body=""
+        ))
+    }
     req_body <- jsonlite::fromJSON(request$rook.input$read_lines())
     maybe_parsed <- try_parse(req_body$code)
 
