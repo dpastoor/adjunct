@@ -19,7 +19,7 @@ tstart <- Sys.time()
 # Create a New App
 app <- Fire$new()
 app$host <- "127.0.0.1"
-app$port <- 3000
+app$port <- 8000
 # Setup the data everytime it starts
 app$on('start', function(server, ...) {
     message("listening on: ", paste(server$host, server$port, sep = ":"))
@@ -46,6 +46,23 @@ app$on('request', function(server, id, request, ...) {
     }
 
     req_body <- jsonlite::fromJSON(request$rook.input$read_lines())
+    if (is.null(req_body$session_name)) {
+        req_body$session_name <- "__nosession"
+    }
+    if (is.null(req_body$code)) {
+        return(list(
+            status = 200L,
+            headers = list('Content-Type' = 'text/html'),
+            body =  c('
+No code provided to be rendered, please post to the endpoint with a JSON object,
+including a session_name and code as an array of lines to be knit. For example, a payload may look like:
+{
+    "session_name": "my_session",
+    "code": ["a <- 2+2", "a"]
+}
+                      ')
+        ))
+    }
     # in case submitted from windows
     req_body$code <- gsub("\\r\\n", "\\\n", req_body$code)
     maybe_parsed <- try_parse(req_body$code)
@@ -72,7 +89,8 @@ app$on('request', function(server, id, request, ...) {
 
 # Be polite
 app$on('end', function(server) {
-    message('Goodbye', difftime(Sys.time(), tstart))
+    print("server was alive for: ")
+    print(difftime(Sys.time(), tstart))
 })
 
 app$ignite()
