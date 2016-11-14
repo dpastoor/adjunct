@@ -19,6 +19,7 @@ tstart <- Sys.time()
 # Create a New App
 app <- Fire$new()
 app$host <- "127.0.0.1"
+app$port <- 3000
 # Setup the data everytime it starts
 app$on('start', function(server, ...) {
     message("listening on: ", paste(server$host, server$port, sep = ":"))
@@ -43,7 +44,10 @@ app$on('request', function(server, id, request, ...) {
             body=""
         ))
     }
+
     req_body <- jsonlite::fromJSON(request$rook.input$read_lines())
+    # in case submitted from windows
+    req_body$code <- gsub("\\r\\n", "\\\n", req_body$code)
     maybe_parsed <- try_parse(req_body$code)
 
     if(maybe_parsed$had_error) {
